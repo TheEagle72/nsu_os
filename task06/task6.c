@@ -123,7 +123,6 @@ void file_get_string(const char* buffer, const off_t buffer_size, const table t)
 	char* str = NULL;
 	off_t index = 0;
 	off_t str_size = t.indices[index+1]-t.indices[index];
-	printf("line number: ");
 	fflush(stdout);
 
 	struct pollfd pdfs;
@@ -143,7 +142,7 @@ void file_get_string(const char* buffer, const off_t buffer_size, const table t)
 		--index;
 		if (index < 0 || index > t.size - 1)
 		{
-			printf("invalid line number: %ld\nline number: ", index + 1);
+			printf("invalid line number: %ld\n", index + 1);
 			continue;
 		}
 
@@ -165,7 +164,7 @@ void file_get_string(const char* buffer, const off_t buffer_size, const table t)
 			perror("MEMORY ALLOCATION FAILED");
 			return;
 		}
-		printf("%s\nline number: ",str);
+		printf("%ld: %s\n", index+1, str);
 		free(str);
 	}
 }

@@ -126,25 +126,15 @@ void file_get_string(const char* buffer, const off_t buffer_size, const table t)
 {
 	char* str = NULL;
 	off_t index = 0;
-	printf("count of lines: %ld\n", t.size);
-	fflush(stdout);
-
 	struct pollfd pdfs;
 	pdfs.fd = 0;
 	pdfs.events = POLLIN;
-	
-	struct pollfd pdfs2;
-	pdfs2.fd = 0;
-	pdfs2.events = POLLIN;
-
 	poll(&pdfs, 1, TIMEOUT);
-	
 	if (!(pdfs.revents & POLLIN))
 	{
 		printf("\n%s", buffer);
 		return;
 	}
-
 
 	while ((index = get_number())!=0)
 	{
@@ -171,13 +161,13 @@ void file_get_string(const char* buffer, const off_t buffer_size, const table t)
 		str = malloc(sizeof(char)*str_size);
 		memcpy(str, (buffer+offset), str_size);
 		
-		if(!str)
+	if(!str)
 		{
 			perror("MEMORY ALLOCATION FAILED");
 			return;
 		}
 
-		printf("%s",str);
+		printf("%ld: %s", index+1, str);
 		free(str);
 	}
 }
@@ -196,6 +186,8 @@ int main(int argc, char** argv)
 	char* buffer = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
 	file_close(fd);
 	table t = file_parse(buffer, size);
+	printf("count of lines: %ld\n", t.size);
+	fflush(stdout);
 	file_get_string(buffer, size, t);
 	free(t.indices);
 	if (munmap(buffer, size) == -1)

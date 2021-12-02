@@ -66,7 +66,7 @@ int get_number()
 	while (scanf("%d", &line_number)!=1)
 	{
 		while (getchar()!='\n'); //clear buffer
-		printf("invalid line number, enter valid number of line or 0 to leave\n");
+		printf("invalid line number: %d\n", line_number);
 	}
 	return line_number;
 }
@@ -118,13 +118,12 @@ void file_get_string(char* buffer, off_t buffer_size, table t)
 	char* str = NULL;
 	int index = 0;
 	off_t str_size = t.indices[index+1]-t.indices[index];
-	printf("line number: ");
 	while ((index = get_number()) != 0)
 	{
 		--index;
 		if (index < 0 || index > t.size - 1)
 		{
-			printf("invalid line number: %d\nline number: ", index + 1);
+			printf("invalid line number: %d\n", index + 1);
 			continue;
 		}
 
@@ -146,14 +145,13 @@ void file_get_string(char* buffer, off_t buffer_size, table t)
 			perror("MEMORY ALLOCATION FAILED");
 			return;
 		}
-		printf("%s\nline number: ", str);
+		printf("%s\n", str);
 		free(str);
 	}
 }
 
 int main(int argc, char** argv)
 {
-	printf("task5.out\n");
 	if (argc != 2)
 	{
 		printf("usage: %s file\n",argv[0]);
