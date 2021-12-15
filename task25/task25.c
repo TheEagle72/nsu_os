@@ -18,6 +18,8 @@ int main(int argc, char** argv)
 	}
 
 	int pipefd[2];
+	char buf;
+
 	if (pipe(pipefd) == -1)
 	{
 		perror("pipe");
@@ -43,7 +45,7 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		wait(NULL);
+		waitpid(sender, NULL, 0);
 
 		pid_t reciever = fork();
 		
@@ -56,18 +58,18 @@ int main(int argc, char** argv)
 		{
 			//receiver code
 			close(pipefd[1]);
-			char buf;
 			while (read(pipefd[0], &buf, 1) > 0)
 			{
 				buf = toupper(buf);
 				write(STDOUT_FILENO, &buf, 1);
 			}
 			write(STDOUT_FILENO, "\n", 1); 
+			close(pipefd[0]);
 			exit(EXIT_SUCCESS);
 		}
 		else
 		{
-		
+			waitpid(reciever, NULL, WNOHANG);
 		}
 	}
 	return 0;

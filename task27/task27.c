@@ -11,29 +11,24 @@ int main(int argc, char** argv)
 		printf("usage: %s file\n", argv[0]);
 		return EXIT_FAILURE;
 	}
+	
+	char* prefix = "grep \"^$\" ";
+	char* postfix = " | wc -l";
+	char* cmd = malloc(strlen(prefix)+strlen(argv[1])+strlen(postfix)+1);
+	strcpy(cmd, prefix);
+	strcat(cmd, argv[1]);
+	strcat(cmd, postfix);
+	FILE* p = popen(cmd, "r");
+	free(cmd);
 
-	FILE* p = popen("wc -l", "w");
 	if (!p)
 	{
 		perror("pipe open");
 	}
 	
-	FILE* f = fopen(argv[1], "r");
-	char* buf = malloc(BUFSIZ);
-	if (!buf)
-	{
-		perror("malloc");
-		return ERR_MEM_ALLOC;
-	}
-	while (fgets(buf, BUFSIZ, f))
-	{
-		if (strlen(buf) != 1)
-		{
-			fprintf(p, "%s", buf);
-		}
-	}
-
-	//grep '^$' data | wc -l
+	int count;
+	fscanf(p, "%d", &count);
+	printf("%d\n", count);
 
 	if (pclose(p)) { perror("pipe close");}
 	return EXIT_SUCCESS;

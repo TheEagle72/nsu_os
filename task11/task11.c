@@ -13,20 +13,47 @@ extern char** environ;
 
 int execvpe_(const char* filename, char** argv, char** envp)
 {
+	char** tmp = environ;
+	environ = envp;
+	execvp(filename, argv);
+	perror("exec");
+	environ = tmp;
 
-	char** env_back = malloc(10);
-	putenv(*envp);
+/*
+	int size=0;
+	while (environ[size++]);
+	char** env_back=malloc(size*sizeof(char*));
 	int i = 0;
+
+	while(environ[i])
+	{
+		env_back[i] = malloc(strlen(environ[i])+1);
+		if (!env_back[i])
+		{
+			perror("malloc");
+			return -1;
+		}
+		strcpy(env_back[i], environ[i]);
+		++i;
+	}
+	
+	i=0;
 	while(envp[i])
 	{
-		env_back[i] = environ[i];
 		putenv(envp[i]);
 		++i;
 	}
 	free(envp);
 	execvp(filename, argv);
-	perror("exec");
 	
+	//if failed
+	i = 0;
+	while(env_back[i])
+	{
+		putenv(env_back[i++]);
+	}
+	perror("exec");
+*/	
 }
 
 int main(int argc, char** argv)
@@ -62,4 +89,5 @@ int main(int argc, char** argv)
 		new_environ[1] = NULL;
 		execvpe_(argv[1], argv, new_environ);
 	}
+	return 0;
 }
